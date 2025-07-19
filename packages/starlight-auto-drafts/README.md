@@ -1,11 +1,6 @@
 <div align="center">
-  <h1>starlight-auto-drafts 🚧</h1>
-  <p>starlight-auto-drafts description</p>
-  <p>
-    <a href="https://dummyimage.com/520x350/121212/cdc8be.png&text=screenshot" title="Screenshot of starlight-auto-drafts">
-      <img alt="Screenshot of starlight-auto-drafts" src="https://dummyimage.com/520x350/121212/cdc8be.png&text=screenshot" width="520" />
-    </a>
-  </p>
+  <h1>starlight-auto-drafts 🪄</h1>
+  <p>Starlight plugin to tweak draft pages default behavior and automatically remove sidebar links to draft pages in production mode.</p>
 </div>
 
 <div align="center">
@@ -18,14 +13,9 @@
   <br />
 </div>
 
-// TODO(HiDeoo)
+## Getting Started
 
-## Features
-
-starlight-auto-drafts presentation.
-
-- starlight-auto-drafts feature 1
-- starlight-auto-drafts feature 2
+Want to get started immediately? Check out the [getting started guide](https://starlight-auto-drafts.netlify.app/getting-started/).
 
 ## License
 

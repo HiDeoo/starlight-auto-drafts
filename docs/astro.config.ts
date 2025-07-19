@@ -9,6 +9,7 @@ export default defineConfig({
       editLink: {
         baseUrl: 'https://github.com/HiDeoo/starlight-auto-drafts/edit/main/docs/',
       },
+      routeMiddleware: './src/routeData.ts',
       plugins: [starlightAutoDrafts()],
       sidebar: [
         {

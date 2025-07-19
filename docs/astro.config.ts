@@ -5,7 +5,8 @@ import starlightAutoDrafts from 'starlight-auto-drafts'
 export default defineConfig({
   integrations: [
     starlight({
-      description: '// TODO(HiDeoo) ',
+      description:
+        'Starlight plugin to tweak draft pages default behavior and automatically remove sidebar links to draft pages in production mode.',
       editLink: {
         baseUrl: 'https://github.com/HiDeoo/starlight-auto-drafts/edit/main/docs/',
       },
@@ -16,11 +17,10 @@ export default defineConfig({
           label: 'Start Here',
           items: ['getting-started'],
         },
-        // TODO(HiDeoo)
-        // {
-        //   label: 'Resources',
-        //   items: [{ label: 'Plugins and Tools', slug: 'resources/starlight' }],
-        // },
+        {
+          label: 'Resources',
+          items: [{ label: 'Plugins and Tools', slug: 'resources/starlight' }],
+        },
         {
           label: 'Tests',
           items: [

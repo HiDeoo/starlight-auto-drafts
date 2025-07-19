@@ -9,6 +9,10 @@ export default defineConfig({
       editLink: {
         baseUrl: 'https://github.com/HiDeoo/starlight-auto-drafts/edit/main/docs/',
       },
+      locales: {
+        root: { label: 'English', lang: 'en' },
+        fr: { label: 'Français', lang: 'fr' },
+      },
       plugins: [starlightAutoDrafts()],
       sidebar: [
         {

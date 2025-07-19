@@ -1,0 +1,7 @@
+a[data-starlight-auto-drafts] {
+  font-style: italic;
+}
+
+a[data-starlight-auto-drafts] .sl-badge {
+  font-style: normal;
+}

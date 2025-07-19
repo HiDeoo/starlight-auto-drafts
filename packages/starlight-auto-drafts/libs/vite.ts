@@ -1,13 +1,12 @@
-import type { HookParameters } from '@astrojs/starlight/types'
 import type { ViteUserConfig } from 'astro'
 
-export function vitePluginStarlightAutoDrafts(starlightConfig: StarlightConfig): VitePlugin {
+import type { DraftIds } from './content'
+
+export function vitePluginStarlightAutoDrafts(draftIds: DraftIds): VitePlugin {
   const modules = {
-    'virtual:starlight-auto-drafts/context': `export default ${JSON.stringify({
-      defaultLocale: starlightConfig.defaultLocale,
-      isMultilingual: Object.keys(starlightConfig.locales ?? {}).length > 1,
-      locales: starlightConfig.locales,
-    } satisfies StarlightAutoDraftsContext)}`,
+    'virtual:starlight-auto-drafts/context': `export default {
+  draftIds: new Set(${JSON.stringify([...draftIds])}),
+}`,
   }
 
   const moduleResolutionMap = Object.fromEntries(
@@ -30,12 +29,8 @@ function resolveVirtualModuleId<TModuleId extends string>(id: TModuleId): `\0${T
   return `\0${id}`
 }
 
-type StarlightConfig = HookParameters<'config:setup'>['config']
-
 export interface StarlightAutoDraftsContext {
-  defaultLocale: StarlightConfig['defaultLocale']
-  isMultilingual: boolean
-  locales: StarlightConfig['locales']
+  draftIds: DraftIds
 }
 
 type VitePlugin = NonNullable<ViteUserConfig['plugins']>[number]

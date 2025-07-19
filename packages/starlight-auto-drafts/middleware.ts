@@ -1,29 +1,31 @@
 import { defineRouteMiddleware, type StarlightRouteData } from '@astrojs/starlight/route-data'
+import context from 'virtual:starlight-auto-drafts/context'
 
-import { drafts } from './libs/content'
 import { stripLeadingAndTrailingSlash } from './libs/path'
 
 export const onRequest = defineRouteMiddleware(({ locals }) => {
   const { starlightRoute } = locals
 
-  starlightRoute.sidebar = filterDrafts(starlightRoute.sidebar)
+  starlightRoute.sidebar = highlightDrafts(starlightRoute.sidebar)
 })
 
-function filterDrafts(items: StarlightRouteData['sidebar']): StarlightRouteData['sidebar'] {
-  const result: StarlightRouteData['sidebar'] = []
-
-  for (const item of items) {
+function highlightDrafts(items: StarlightRouteData['sidebar']): StarlightRouteData['sidebar'] {
+  return items.map((item) => {
     if (item.type === 'group') {
-      result.push({ ...item, entries: filterDrafts(item.entries) })
-      continue
+      return { ...item, entries: highlightDrafts(item.entries) }
+    } else if (!context.draftIds.has(stripLeadingAndTrailingSlash(item.href))) {
+      return item
     }
 
-    const slug = stripLeadingAndTrailingSlash(item.href)
+    if (!item.badge) {
+      item.badge = {
+        text: 'Draft',
+        variant: 'caution',
+      }
+    }
 
-    if (drafts.has(slug)) continue
+    item.attrs = { ...item.attrs, 'data-starlight-auto-drafts': 'true' }
 
-    result.push(item)
-  }
-
-  return result
+    return item
+  })
 }

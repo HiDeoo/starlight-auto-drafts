@@ -1,49 +1,89 @@
-import { getCollection, type CollectionEntry } from 'astro:content'
-import context from 'virtual:starlight-auto-drafts/context'
+import fs from 'node:fs/promises'
 
-import { stripTrailingSlash } from './path'
+import type { StarlightUserConfig } from '@astrojs/starlight/types'
+import type { AstroConfig } from 'astro'
+import { slug } from 'github-slugger'
+import matter from 'gray-matter'
+import { glob } from 'tinyglobby'
 
-export const defaultLocale = context.defaultLocale === 'root' ? undefined : context.defaultLocale
+import { getDefaultLocale, getLocalizedId, isMultilingual, type Locale } from './i18n'
+import { stripExtension, stripLeadingAndTrailingSlash } from './path'
 
-async function getDraftRoutes() {
-  const routes = new Set<string>()
+export async function getDraftIds(astroConfig: AstroConfig, starlightConfig: StarlightUserConfig): Promise<DraftIds> {
+  const ids: DraftIds = new Set()
+  const defaultLocale = getDefaultLocale(starlightConfig)
 
-  let entries: CollectionEntry<'docs'>[] = await getCollection('docs')
-  entries = entries.map((entry) => ({ ...entry, id: entry.id === 'index' ? '' : entry.id }))
+  const entries = await getEntries(astroConfig)
+  const draftEntries = entries.filter((entry) => entry.draft === true)
 
-  const draftEntries = entries.filter((entry) => entry.data.draft === true)
+  for (const entry of draftEntries) ids.add(entry.id)
 
-  for (const entry of draftEntries) routes.add(entry.id)
+  if (isMultilingual(starlightConfig)) {
+    const defaultLocaleEntries = filterEntriesByLocale(starlightConfig, entries, defaultLocale)
 
-  if (context.isMultilingual) {
-    const defaultLocaleEntries = filterEntriesByLocale(entries, defaultLocale)
-
-    for (const locale in context.locales) {
+    for (const locale in starlightConfig.locales) {
       if (locale === defaultLocale || locale === 'root') continue
-      const localeEntries = filterEntriesByLocale(entries, locale)
+      const localeEntries = filterEntriesByLocale(starlightConfig, entries, locale)
 
       for (const defaultLocaleEntry of defaultLocaleEntries) {
-        const localeId = getLocalizedId(defaultLocaleEntry.id, locale)
+        const localeId = getLocalizedId(starlightConfig, defaultLocaleEntry.id, locale)
         const hasLocaleEntry = localeEntries.some((entry) => entry.id === localeId)
 
-        if (hasLocaleEntry || defaultLocaleEntry.data.draft !== true) continue
+        if (hasLocaleEntry || defaultLocaleEntry.draft !== true) continue
 
-        routes.add(localeId)
+        ids.add(localeId)
       }
     }
   }
 
-  return routes
+  return ids
+}
+
+async function getEntries(astroConfig: AstroConfig): Promise<Entry[]> {
+  const collectionUrl = new URL('content/docs', astroConfig.srcDir)
+
+  // TODO(HiDeoo) file types
+  // TODO(HiDeoo) underscore
+  const paths = await glob(['**/*.md'], {
+    absolute: true,
+    cwd: collectionUrl.pathname,
+    onlyFiles: true,
+  })
+
+  const entries: Entry[] = []
+
+  for (const path of paths) {
+    const content = await fs.readFile(path, 'utf8')
+    const frontmatter = matter(content)
+    const customSlug: unknown = frontmatter.data['slug']
+    entries.push({
+      id:
+        typeof customSlug === 'string' && customSlug.length > 0
+          ? stripLeadingAndTrailingSlash(customSlug)
+          : getEntryId(path, collectionUrl),
+      draft: frontmatter.data['draft'] === true,
+    })
+  }
+
+  return entries
+}
+
+function getEntryId(path: string, collectionUrl: URL): string {
+  const idPath = path.replace(collectionUrl.pathname, '')
+  const segments = stripLeadingAndTrailingSlash(stripExtension(idPath)).split('/')
+  const idSegments = segments.map((segment) => slug(segment))
+  const id = idSegments.join('/')
+  return id === 'index' ? '' : id
 }
 
 // https://github.com/withastro/starlight/blob/bf58c60b9c3d5f5efdafbdba83cefa0566a367dc/packages/starlight/utils/routing/index.ts#L131
-function filterEntriesByLocale(entries: CollectionEntry<'docs'>[], locale: Locale): CollectionEntry<'docs'>[] {
-  if (!context.locales) return entries
+function filterEntriesByLocale(starlightConfig: StarlightUserConfig, entries: Entry[], locale: Locale): Entry[] {
+  if (!starlightConfig.locales) return entries
 
-  if (locale && locale in context.locales) {
+  if (locale && locale in starlightConfig.locales) {
     return entries.filter((entry) => entry.id === locale || entry.id.startsWith(`${locale}/`))
-  } else if (context.locales.root) {
-    const locales = Object.keys(context.locales).filter((locale) => locale !== 'root')
+  } else if (starlightConfig.locales.root) {
+    const locales = Object.keys(starlightConfig.locales).filter((locale) => locale !== 'root')
     const isLocaleIndex = new RegExp(`^(${locales.join('|')})$`)
     const isLocaleDirectory = new RegExp(`^(${locales.join('|')})/`)
     return entries.filter((entry) => !isLocaleIndex.test(entry.id) && !isLocaleDirectory.test(entry.id))
@@ -52,25 +92,9 @@ function filterEntriesByLocale(entries: CollectionEntry<'docs'>[], locale: Local
   return entries
 }
 
-// https://github.com/withastro/starlight/blob/bf58c60b9c3d5f5efdafbdba83cefa0566a367dc/packages/starlight/utils/slugs.ts#L71
-function getLocalizedId(id: string, locale: Locale): string {
-  const idLocale = getLocaleFromId(id)
-  if (idLocale === locale) return id
-  locale = locale ?? ''
-  if (idLocale === id) return locale
-  if (idLocale) return stripTrailingSlash(id.replace(`${idLocale}/`, locale ? `${locale}/` : ''))
-  return id ? `${locale}/${id}` : locale
+interface Entry {
+  id: string
+  draft: boolean
 }
 
-// https://github.com/withastro/starlight/blob/bf58c60b9c3d5f5efdafbdba83cefa0566a367dc/packages/starlight/integrations/shared/slugToLocale.ts
-function getLocaleFromId(id: string): Locale {
-  const localesConfig = context.locales ?? {}
-  const baseSegment = id.split('/')[0]
-  if (baseSegment && localesConfig[baseSegment]) return baseSegment
-  if (!localesConfig.root) return context.defaultLocale
-  return undefined
-}
-
-export const drafts = await getDraftRoutes()
-
-type Locale = string | undefined
+export type DraftIds = Set<string>

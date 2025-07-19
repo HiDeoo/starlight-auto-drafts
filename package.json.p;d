@@ -1,0 +1,42 @@
+{
+  "name": "starlight-auto-drafts",
+  "version": "0.0.1",
+  "license": "MIT",
+  "description": "",
+  "author": "HiDeoo <github@hideoo.dev> (https://hideoo.dev)",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test implemented.\" && exit 1",
+    "lint": "eslint . --cache --max-warnings=0 && tsc --noEmit",
+    "format": "prettier -w --cache --ignore-unknown .",
+    "version": "pnpm changeset version && pnpm i --no-frozen-lockfile",
+    "prepublishOnly": "pnpm build"
+  },
+  "devDependencies": {
+    "@changesets/changelog-github": "^0.5.1",
+    "@changesets/cli": "^2.29.5",
+    "@hideoo/eslint-config": "^4.0.0",
+    "@hideoo/prettier-config": "^2.0.0",
+    "@hideoo/tsconfig": "^2.0.1",
+    "eslint": "^9.31.0",
+    "prettier": "^3.6.2",
+    "typescript": "^5.8.3"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "packageManager": "pnpm@10.13.1",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "sideEffects": false,
+  "keywords": [],
+  "homepage": "https://github.com/HiDeoo/starlight-auto-drafts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/HiDeoo/starlight-auto-drafts.git"
+  },
+  "bugs": "https://github.com/HiDeoo/starlight-auto-drafts/issues",
+  "prettier": "@hideoo/prettier-config"
+}

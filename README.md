@@ -1,1 +1,1 @@
-# starlight-auto-drafts
+packages/starlight-auto-drafts/README.md

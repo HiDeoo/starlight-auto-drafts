@@ -9,6 +9,10 @@ import { glob } from 'tinyglobby'
 import { getDefaultLocale, getLocalizedId, isMultilingual, type Locale } from './i18n'
 import { stripExtension, stripLeadingAndTrailingSlash } from './path'
 
+// https://github.com/withastro/starlight/blob/bf58c60b9c3d5f5efdafbdba83cefa0566a367dc/packages/starlight/loaders.ts#L4-L6
+// https://github.com/withastro/starlight/blob/bf58c60b9c3d5f5efdafbdba83cefa0566a367dc/packages/starlight/loaders.ts#L52
+const docsExtensions = ['markdown', 'mdown', 'mkdn', 'mkd', 'mdwn', 'md', 'mdx', 'mdoc']
+
 export async function getDraftIds(astroConfig: AstroConfig, starlightConfig: StarlightUserConfig): Promise<DraftIds> {
   const ids: DraftIds = new Set()
   const defaultLocale = getDefaultLocale(starlightConfig)
@@ -42,9 +46,7 @@ export async function getDraftIds(astroConfig: AstroConfig, starlightConfig: Sta
 async function getEntries(astroConfig: AstroConfig): Promise<Entry[]> {
   const collectionUrl = new URL('content/docs', astroConfig.srcDir)
 
-  // TODO(HiDeoo) file types
-  // TODO(HiDeoo) underscore
-  const paths = await glob(['**/*.md'], {
+  const paths = await glob([`**/[^_]*.{${docsExtensions.join(',')}}`], {
     absolute: true,
     cwd: collectionUrl.pathname,
     onlyFiles: true,

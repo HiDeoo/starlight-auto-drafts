@@ -1,2 +1,5 @@
 .eslintcache
 eslint.config.mjs
+playwright.config.ts
+test-results
+tests

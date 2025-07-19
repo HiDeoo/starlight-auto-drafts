@@ -40,6 +40,5 @@ jobs:
       - name: Lint
         run: pnpm lint
 
-      - name: Build for production
-        run: pnpm build
-        working-directory: docs
+      - name: Test
+        run: pnpm test

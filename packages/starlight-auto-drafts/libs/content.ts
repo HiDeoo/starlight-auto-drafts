@@ -55,7 +55,7 @@ async function getEntries(astroConfig: AstroConfig): Promise<Entry[]> {
   const entries: Entry[] = []
 
   for (const path of paths) {
-    const content = await fs.readFile(path, 'utf8')
+    const content = await readFrontmatter(path)
     const frontmatter = matter(content)
     const customSlug: unknown = frontmatter.data['slug']
     entries.push({
@@ -68,6 +68,42 @@ async function getEntries(astroConfig: AstroConfig): Promise<Entry[]> {
   }
 
   return entries
+}
+
+async function readFrontmatter(path: string): Promise<string> {
+  let handle: fs.FileHandle | undefined
+
+  try {
+    handle = await fs.open(path, 'r')
+
+    let didStartFrontmatter = false
+    const buffer = new Uint8Array(1024)
+    const decoder = new TextDecoder()
+    let content = ''
+
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    while (true) {
+      const { bytesRead } = await handle.read(buffer, 0, buffer.length, null)
+      if (bytesRead === 0) break
+
+      const chunk = decoder.decode(buffer.subarray(0, bytesRead))
+      content += chunk
+
+      if (!didStartFrontmatter) {
+        const separatorIndex = chunk.indexOf('---')
+        if (separatorIndex !== -1) didStartFrontmatter = true
+      }
+
+      if (didStartFrontmatter) {
+        const containsEndSeparator = /\r?\n---(?:\r?\n|$)/.test(content)
+        if (containsEndSeparator) break
+      }
+    }
+
+    return content
+  } finally {
+    await handle?.close()
+  }
 }
 
 function getEntryId(path: string, collectionUrl: URL): string {

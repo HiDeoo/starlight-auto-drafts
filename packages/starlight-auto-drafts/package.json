@@ -1,0 +1,53 @@
+{
+  "name": "starlight-auto-drafts",
+  "version": "0.0.1",
+  "license": "MIT",
+  "description": "Starlight plugin to tweak draft pages default behavior and automatically remove sidebar links to draft pages in production mode.",
+  "author": "HiDeoo <github@hideoo.dev> (https://hideoo.dev)",
+  "type": "module",
+  "exports": {
+    ".": "./index.ts",
+    "./middleware": "./middleware.ts",
+    "./styles": "./styles.css",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "test": "playwright install --with-deps chromium && playwright test",
+    "lint": "eslint . --cache --max-warnings=0"
+  },
+  "dependencies": {
+    "github-slugger": "^2.0.0",
+    "gray-matter": "^4.0.3",
+    "tinyglobby": "^0.2.14"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.54.1"
+  },
+  "peerDependencies": {
+    "@astrojs/starlight": ">=0.35.0"
+  },
+  "engines": {
+    "node": ">=18.17.1"
+  },
+  "packageManager": "pnpm@10.5.2",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "sideEffects": false,
+  "keywords": [
+    "starlight",
+    "drafts",
+    "sidebar",
+    "links",
+    "documentation",
+    "astro"
+  ],
+  "homepage": "https://github.com/HiDeoo/starlight-auto-drafts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/HiDeoo/starlight-auto-drafts.git",
+    "directory": "packages/starlight-auto-drafts"
+  },
+  "bugs": "https://github.com/HiDeoo/starlight-auto-drafts/issues"
+}

@@ -1,0 +1,55 @@
+---
+title: Getting Started
+description: Learn how to tweak the behavior of draft pages in Starlight and automatically remove sidebar links to draft pages in production mode with the Starlight Auto Drafts plugin.
+---
+
+A [Starlight](https://starlight.astro.build) plugin to tweak the behavior of [draft pages](https://starlight.astro.build/reference/frontmatter/#draft):
+
+- In development mode, sidebar links to draft pages are highlighted with a badge and an italicized label.
+- In production mode, sidebar links to draft pages are automatically removed.
+
+By default, Starlight errors when its sidebar configuration contains links using [slugs](https://starlight.astro.build/guides/sidebar/#internal-links) to draft pages.
+This behavior is great as it can help catch many mistakes, e.g. adding a sidebar link to a draft page and forgetting to remove the draft status before deploying, and also avoids automatic sidebar changes between development and production modes.
+
+Starlight Auto Drafts provides an alternative behavior that automatically removes draft pages from the sidebar in production mode, which can be useful if you prefer this behavior and are not concerned about the potential issues mentioned above.
+
+## Prerequisites
+
+You will need to have a Starlight website set up.
+If you don't have one yet, you can follow the ["Getting Started"](https://starlight.astro.build/getting-started/) guide in the Starlight docs to create one.
+
+## Installation
+
+import { Steps } from '@astrojs/starlight/components'
+import { PackageManagers } from '@hideoo/starlight-plugins-docs-components'
+import { FileTree } from '@astrojs/starlight/components'
+
+<Steps>
+
+1. Starlight Auto Drafts is a Starlight [plugin](https://starlight.astro.build/reference/plugins/). Install it using your favorite package manager:
+
+   <PackageManagers pkg="starlight-auto-drafts" />
+
+2. Add the plugin to your Starlight [configuration](https://starlight.astro.build/reference/configuration/#plugins) in the `astro.config.mjs` file.
+
+   ```js title="astro.config.mjs" ins={4,9}
+   // @ts-check
+   import starlight from '@astrojs/starlight'
+   import { defineConfig } from 'astro/config'
+   import starlightAutoDrafts from 'starlight-auto-drafts'
+
+   export default defineConfig({
+     integrations: [
+       starlight({
+         plugins: [starlightAutoDrafts()],
+         title: 'My Docs',
+       }),
+     ],
+   })
+   ```
+
+3. [Start the development server](https://starlight.astro.build/getting-started/#start-the-development-server) to preview the updated sidebar where draft pages are highlighted with a badge and an italicized label.
+
+   When [building your site for production](https://docs.astro.build/en/reference/cli-reference/#astro-build), all sidebar links to draft pages will be automatically removed.
+
+</Steps>

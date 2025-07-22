@@ -1,6 +1,5 @@
 import fs from 'node:fs/promises'
 
-import type { StarlightUserConfig } from '@astrojs/starlight/types'
 import type { AstroConfig } from 'astro'
 import { slug } from 'github-slugger'
 import matter from 'gray-matter'
@@ -8,6 +7,7 @@ import { glob } from 'tinyglobby'
 
 import { getDefaultLocale, getLocalizedId, isMultilingual, type Locale } from './i18n'
 import { stripExtension, stripLeadingAndTrailingSlash } from './path'
+import type { StarlightUserConfig } from './starlight'
 
 // https://github.com/withastro/starlight/blob/bf58c60b9c3d5f5efdafbdba83cefa0566a367dc/packages/starlight/loaders.ts#L4-L6
 // https://github.com/withastro/starlight/blob/bf58c60b9c3d5f5efdafbdba83cefa0566a367dc/packages/starlight/loaders.ts#L52

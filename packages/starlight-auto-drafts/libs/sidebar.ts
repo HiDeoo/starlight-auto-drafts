@@ -1,8 +1,8 @@
-import type { StarlightUserConfig } from '@astrojs/starlight/types'
 import type { AstroConfig } from 'astro'
 
 import type { DraftIds } from './content'
 import { stripLeadingAndTrailingSlash } from './path'
+import type { StarlightUserConfig } from './starlight'
 
 export async function filterDrafts(
   astroConfig: AstroConfig,

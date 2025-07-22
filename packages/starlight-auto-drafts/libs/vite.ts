@@ -1,10 +1,12 @@
 import type { ViteUserConfig } from 'astro'
 
+import type { StarlightAutoDraftsConfig } from './config'
 import type { DraftIds } from './content'
 
-export function vitePluginStarlightAutoDrafts(draftIds: DraftIds): VitePlugin {
+export function vitePluginStarlightAutoDrafts(config: StarlightAutoDraftsConfig, draftIds: DraftIds): VitePlugin {
   const modules = {
     'virtual:starlight-auto-drafts/context': `export default {
+  config: ${JSON.stringify(config)},
   draftIds: new Set(${JSON.stringify([...draftIds])}),
 }`,
   }
@@ -30,6 +32,7 @@ function resolveVirtualModuleId<TModuleId extends string>(id: TModuleId): `\0${T
 }
 
 export interface StarlightAutoDraftsContext {
+  config: StarlightAutoDraftsConfig
   draftIds: DraftIds
 }
 

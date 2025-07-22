@@ -1,6 +1,5 @@
-import type { StarlightUserConfig } from '@astrojs/starlight/types'
-
 import { stripTrailingSlash } from './path'
+import type { StarlightUserConfig } from './starlight'
 
 export function getDefaultLocale(starlightConfig: StarlightUserConfig): Locale {
   return starlightConfig.defaultLocale === 'root' ? undefined : starlightConfig.defaultLocale

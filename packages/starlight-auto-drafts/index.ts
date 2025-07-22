@@ -1,10 +1,23 @@
-import type { StarlightPlugin, StarlightUserConfig } from '@astrojs/starlight/types'
+import type { StarlightPlugin } from '@astrojs/starlight/types'
+import { AstroError } from 'astro/errors'
 
+import { StarlightAutoDraftsConfigSchema, type StarlightAutoDraftsUserConfig } from './libs/config'
 import { getDraftIds } from './libs/content'
 import { filterDrafts } from './libs/sidebar'
 import { vitePluginStarlightAutoDrafts } from './libs/vite'
 
-export default function starlightAutoDrafts(): StarlightPlugin {
+export default function starlightAutoDrafts(userConfig?: StarlightAutoDraftsUserConfig): StarlightPlugin {
+  const parsedConfig = StarlightAutoDraftsConfigSchema.safeParse(userConfig)
+
+  if (!parsedConfig.success) {
+    throw new AstroError(
+      `The provided plugin configuration is invalid.\n${parsedConfig.error.issues.map((issue) => issue.message).join('\n')}`,
+      `See the error report above for more informations.\n\nIf you believe this is a bug, please file an issue at https://github.com/HiDeoo/starlight-auto-drafts/issues/new/choose`,
+    )
+  }
+
+  const config = parsedConfig.data
+
   return {
     name: 'starlight-auto-drafts',
     hooks: {
@@ -13,13 +26,11 @@ export default function starlightAutoDrafts(): StarlightPlugin {
         addRouteMiddleware,
         astroConfig,
         command,
-        config,
+        config: starlightConfig,
         logger,
         updateConfig,
       }) => {
         if (command !== 'dev' && command !== 'build') return
-
-        const starlightConfig = config as StarlightUserConfig
         if (!starlightConfig.sidebar) return
 
         const draftIds = await getDraftIds(astroConfig, starlightConfig)
@@ -33,7 +44,7 @@ export default function starlightAutoDrafts(): StarlightPlugin {
               'astro:config:setup': ({ updateConfig }) => {
                 updateConfig({
                   vite: {
-                    plugins: [vitePluginStarlightAutoDrafts(draftIds)],
+                    plugins: [vitePluginStarlightAutoDrafts(config, draftIds)],
                   },
                 })
               },
@@ -41,7 +52,7 @@ export default function starlightAutoDrafts(): StarlightPlugin {
           })
 
           updateConfig({
-            customCss: [...(starlightConfig.customCss ?? []), 'starlight-auto-drafts/styles'],
+            customCss: ['starlight-auto-drafts/styles', ...(starlightConfig.customCss ?? [])],
           })
 
           return

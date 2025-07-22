@@ -1,0 +1,23 @@
+.starlight-auto-drafts-docs-demo {
+  font-style: italic;
+}
+
+.starlight-auto-drafts-docs-demo .sl-badge {
+  font-style: normal;
+}
+
+a.starlight-auto-drafts-docs-demo-custom-styles[data-starlight-auto-drafts] {
+  color: var(--sl-color-orange);
+}
+
+[data-theme='light'] a.starlight-auto-drafts-docs-demo-custom-styles[data-starlight-auto-drafts] {
+  color: var(--sl-color-orange-high);
+}
+
+.sidebar-preview.starlight-auto-drafts-docs-demo-custom-sidebar {
+  border-inline-end: 3px dashed var(--sl-color-orange);
+}
+
+[data-theme='light'] .sidebar-preview.starlight-auto-drafts-docs-demo-custom-sidebar {
+  border-color: var(--sl-color-orange-high);
+}

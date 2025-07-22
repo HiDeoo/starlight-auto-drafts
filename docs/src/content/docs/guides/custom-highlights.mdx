@@ -1,0 +1,125 @@
+---
+title: Custom Highlights
+description: Learn how to customize the default highlights for draft pages in the sidebar in development mode with the Starlight Auto Drafts plugin.
+---
+
+By default, the Starlight Auto Drafts plugin highlights draft pages in the sidebar in development mode with a badge and an italicized label.
+
+Additionally, each sidebar link to a draft page gets a `data-starlight-auto-drafts` data attribute added to it, which you can use to apply custom styles to draft pages in the sidebar.
+
+## Disabling badges
+
+To disable the default badge added to draft pages in the sidebar, you can set the [`highlights.badges`](/configuration/#badges) configuration option to `false`:
+
+```js title="astro.config.mjs" {11-13}
+// @ts-check
+import starlight from '@astrojs/starlight'
+import { defineConfig } from 'astro/config'
+import starlightAutoDrafts from 'starlight-auto-drafts'
+
+export default defineConfig({
+  integrations: [
+    starlight({
+      plugins: [
+        starlightAutoDrafts({
+          highlights: {
+            badges: false,
+          },
+        }),
+      ],
+      title: 'My Docs',
+    }),
+  ],
+})
+```
+
+In the following preview, the “API Reference” draft page is highlighted in the sidebar only with an italicized label and no badge:
+
+import SidebarPreview from '../../../components/SidebarPreview.astro'
+
+<SidebarPreview
+  config={[
+    {
+      label: 'Reference',
+      items: [
+        { label: 'Configuration Reference' },
+        { label: 'API Reference', attrs: { class: 'starlight-auto-drafts-docs-demo' } },
+      ],
+    },
+  ]}
+/>
+
+## Using custom styles
+
+Sidebar links to draft pages in development mode have the `data-starlight-auto-drafts` data attribute added to them, which you can use to apply [custom CSS styles](https://starlight.astro.build/guides/css-and-tailwind/#custom-css-styles).
+
+The following example uses the custom `data-starlight-auto-drafts` attribute to change the color of draft pages in the sidebar for both the light and dark themes:
+
+```css title="src/styles/custom.css"
+a[data-starlight-auto-drafts] {
+  color: var(--sl-color-orange);
+}
+
+[data-theme='light'] a[data-starlight-auto-drafts] {
+  color: var(--sl-color-orange-high);
+}
+```
+
+The following preview shows the custom styles applied to the “API Reference” draft page in the sidebar:
+
+<SidebarPreview
+  config={[
+    {
+      label: 'Reference',
+      items: [
+        { label: 'Configuration Reference' },
+        {
+          label: 'API Reference',
+          badge: 'Draft',
+          attrs: {
+            class: 'starlight-auto-drafts-docs-demo starlight-auto-drafts-docs-demo-custom-styles',
+            'data-starlight-auto-drafts': 'true',
+          },
+        },
+      ],
+    },
+  ]}
+/>
+
+## Using custom sidebar styles
+
+Using the `data-starlight-auto-drafts` attribute added to sidebar links to draft pages, you can also apply [custom CSS styles](https://starlight.astro.build/guides/css-and-tailwind/#custom-css-styles) to the sidebar itself if it contains any draft pages in development mode.
+
+The following example applies a dashed border to the sidebar when it contains draft pages:
+
+```css title="src/styles/custom.css"
+#starlight__sidebar:has(a[data-starlight-auto-drafts]) {
+  border-inline-end: 3px dashed var(--sl-color-orange);
+}
+
+[data-theme='light'] #starlight__sidebar:has(a[data-starlight-auto-drafts]) {
+  border-color: var(--sl-color-orange-high);
+}
+```
+
+The following preview shows the custom styles applied to the sidebar when it contains draft pages:
+
+<SidebarPreview
+  class="starlight-auto-drafts-docs-demo-custom-sidebar"
+  config={[
+    {
+      label: 'Reference',
+      items: [
+        { label: 'Configuration Reference' },
+        {
+          label: 'API Reference',
+          badge: 'Draft',
+          attrs: {
+            class: 'starlight-auto-drafts-docs-demo',
+            'data-starlight-auto-drafts': 'true',
+          },
+        },
+      ],
+    },
+  ]}
+/>

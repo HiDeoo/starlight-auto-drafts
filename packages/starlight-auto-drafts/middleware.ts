@@ -17,7 +17,7 @@ function highlightDrafts(items: StarlightRouteData['sidebar']): StarlightRouteDa
       return item
     }
 
-    if (!item.badge) {
+    if (!item.badge && context.config.highlights.badges) {
       item.badge = {
         text: 'Draft',
         variant: 'caution',

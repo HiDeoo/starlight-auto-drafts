@@ -5,6 +5,7 @@ import starlightAutoDrafts from 'starlight-auto-drafts'
 export default defineConfig({
   integrations: [
     starlight({
+      customCss: ['./src/styles.css'],
       description:
         'Starlight plugin to tweak draft pages default behavior and automatically remove sidebar links to draft pages in production mode.',
       editLink: {
@@ -15,7 +16,11 @@ export default defineConfig({
       sidebar: [
         {
           label: 'Start Here',
-          items: ['getting-started'],
+          items: ['getting-started', 'configuration'],
+        },
+        {
+          label: 'Guides',
+          items: ['guides/custom-highlights'],
         },
         {
           label: 'Resources',

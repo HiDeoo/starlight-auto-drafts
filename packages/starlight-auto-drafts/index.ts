@@ -8,7 +8,15 @@ export default function starlightAutoDrafts(): StarlightPlugin {
   return {
     name: 'starlight-auto-drafts',
     hooks: {
-      'config:setup': async ({ addIntegration, addRouteMiddleware, astroConfig, command, config, updateConfig }) => {
+      'config:setup': async ({
+        addIntegration,
+        addRouteMiddleware,
+        astroConfig,
+        command,
+        config,
+        logger,
+        updateConfig,
+      }) => {
         if (command !== 'dev' && command !== 'build') return
 
         const starlightConfig = config as StarlightUserConfig
@@ -39,9 +47,21 @@ export default function starlightAutoDrafts(): StarlightPlugin {
           return
         }
 
-        updateConfig({
-          sidebar: await filterDrafts(astroConfig, starlightConfig, starlightConfig.sidebar, draftIds),
-        })
+        const [sidebar, filteredItems] = await filterDrafts(
+          astroConfig,
+          starlightConfig,
+          starlightConfig.sidebar,
+          draftIds,
+        )
+
+        if (filteredItems.length > 0) {
+          logger.info(`Filtered ${filteredItems.length} links to draft pages from the sidebar configuration:`)
+          for (const [index, slug] of filteredItems.entries()) {
+            logger.info(`\u001B[2m ${index === filteredItems.length - 1 ? '└─' : '├─'} ${slug}\u001B[0m`)
+          }
+        }
+
+        updateConfig({ sidebar })
       },
     },
   }

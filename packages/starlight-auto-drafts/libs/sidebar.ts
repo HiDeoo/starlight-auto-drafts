@@ -9,28 +9,36 @@ export async function filterDrafts(
   starlightConfig: StarlightUserConfig,
   sidebar: StarlightSidebarUserConfig,
   draftIds: DraftIds,
-): Promise<StarlightSidebarUserConfig> {
+): Promise<[sidebar: StarlightSidebarUserConfig, filteredItems: string[]]> {
   const result: StarlightSidebarUserConfig = []
+  const filteredItems: string[] = []
+  let slug: string | undefined
 
   for (const item of sidebar) {
     if (typeof item === 'string') {
-      if (draftIds.has(item)) continue
+      slug = item
     } else if ('slug' in item) {
-      if (draftIds.has(item.slug)) continue
+      slug = item.slug
     } else if ('link' in item) {
-      if (draftIds.has(stripLeadingAndTrailingSlash(item.link))) continue
-    } else if (!('autogenerate' in item)) {
-      result.push({
-        ...item,
-        items: await filterDrafts(astroConfig, starlightConfig, item.items, draftIds),
-      })
+      slug = stripLeadingAndTrailingSlash(item.link)
+    } else if ('autogenerate' in item) {
+      slug = undefined
+    } else {
+      const [items, groupFilteredItems] = await filterDrafts(astroConfig, starlightConfig, item.items, draftIds)
+      filteredItems.push(...groupFilteredItems)
+      result.push({ ...item, items })
+      continue
+    }
+
+    if (slug !== undefined && draftIds.has(slug)) {
+      filteredItems.push(slug)
       continue
     }
 
     result.push(item)
   }
 
-  return result
+  return [result, filteredItems]
 }
 
 type StarlightSidebarUserConfig = NonNullable<StarlightUserConfig['sidebar']>

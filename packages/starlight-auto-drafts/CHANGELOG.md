@@ -1,5 +1,11 @@
 # starlight-auto-drafts
 
+## 0.2.1
+
+### Patch Changes
+
+- [#8](https://github.com/HiDeoo/starlight-auto-drafts/pull/8) [`2755fb7`](https://github.com/HiDeoo/starlight-auto-drafts/commit/2755fb7eecb2caa667f05f17d5b42637faa85d4f) Thanks [@HiDeoo](https://github.com/HiDeoo)! - Setups trusted publishing using OpenID Connect (OIDC) authentication — no code changes.
+
 ## 0.2.0
 
 ### Minor Changes

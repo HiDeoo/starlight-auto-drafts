@@ -2,6 +2,10 @@ import starlight from '@astrojs/starlight'
 import { defineConfig } from 'astro/config'
 import starlightAutoDrafts from 'starlight-auto-drafts'
 
+const site =
+  (process.env['CONTEXT'] === 'production' ? process.env['URL'] : process.env['DEPLOY_PRIME_URL']) ??
+  'https://starlight-auto-drafts.netlify.app/'
+
 export default defineConfig({
   integrations: [
     starlight({
@@ -11,6 +15,20 @@ export default defineConfig({
       editLink: {
         baseUrl: 'https://github.com/HiDeoo/starlight-auto-drafts/edit/main/docs/',
       },
+      head: [
+        {
+          tag: 'meta',
+          attrs: { property: 'og:image', content: new URL('og.jpg', site).href },
+        },
+        {
+          tag: 'meta',
+          attrs: {
+            property: 'og:image:alt',
+            content:
+              'Starlight plugin to tweak draft pages default behavior and automatically remove sidebar links to draft pages in production mode.',
+          },
+        },
+      ],
       routeMiddleware: './src/routeData.ts',
       plugins: [starlightAutoDrafts()],
       sidebar: [
@@ -68,6 +86,6 @@ export default defineConfig({
       title: 'Starlight Auto Drafts',
     }),
   ],
-  site: 'https://starlight-auto-drafts.netlify.app/',
+  site,
   trailingSlash: 'always',
 })

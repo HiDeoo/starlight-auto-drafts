@@ -8,9 +8,9 @@ export const StarlightAutoDraftsConfigSchema = z
         /** Controls whether or not badges are added to draft pages in the sidebar in development mode. */
         badges: z.boolean().default(true),
       })
-      .default({}),
+      .prefault({}),
   })
-  .default({})
+  .prefault({})
 
 export type StarlightAutoDraftsUserConfig = z.input<typeof StarlightAutoDraftsConfigSchema>
 export type StarlightAutoDraftsConfig = z.output<typeof StarlightAutoDraftsConfigSchema>

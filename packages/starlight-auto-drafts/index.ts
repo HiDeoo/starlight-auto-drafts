@@ -1,5 +1,6 @@
 import type { StarlightPlugin } from '@astrojs/starlight/types'
 import { AstroError } from 'astro/errors'
+import { z } from 'astro/zod'
 
 import { StarlightAutoDraftsConfigSchema, type StarlightAutoDraftsUserConfig } from './libs/config'
 import { getDraftIds } from './libs/content'
@@ -11,7 +12,10 @@ export default function starlightAutoDrafts(userConfig?: StarlightAutoDraftsUser
 
   if (!parsedConfig.success) {
     throw new AstroError(
-      `The provided plugin configuration is invalid.\n${parsedConfig.error.issues.map((issue) => issue.message).join('\n')}`,
+      `Invalid starlight-auto-drafts configuration:
+
+${z.prettifyError(parsedConfig.error)}
+`,
       `See the error report above for more informations.\n\nIf you believe this is a bug, please file an issue at https://github.com/HiDeoo/starlight-auto-drafts/issues/new/choose`,
     )
   }

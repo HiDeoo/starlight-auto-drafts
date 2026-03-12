@@ -1,5 +1,15 @@
 # starlight-auto-drafts
 
+## 0.3.0
+
+### Minor Changes
+
+- [#10](https://github.com/HiDeoo/starlight-auto-drafts/pull/10) [`be00dd9`](https://github.com/HiDeoo/starlight-auto-drafts/commit/be00dd940e998e28b704067d1c87cdde86c9896a) Thanks [@HiDeoo](https://github.com/HiDeoo)! - Adds support for Astro v6, drops support for Astro v5.
+
+  ⚠️ **BREAKING CHANGE:** The minimum supported version of Starlight is now `0.38.0`.
+
+  Please follow the [upgrade guide](https://github.com/withastro/starlight/releases/tag/%40astrojs%2Fstarlight%400.38.0) to update your project.
+
 ## 0.2.1
 
 ### Patch Changes

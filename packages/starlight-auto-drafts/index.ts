@@ -72,7 +72,7 @@ ${z.prettifyError(parsedConfig.error)}
         if (filteredItems.length > 0) {
           logger.info(`Filtered ${filteredItems.length} links to draft pages from the sidebar configuration:`)
           for (const [index, slug] of filteredItems.entries()) {
-            logger.info(`\u001B[2m ${index === filteredItems.length - 1 ? '└─' : '├─'} ${slug}\u001B[0m`)
+            logger.info(`\u{1B}[2m ${index === filteredItems.length - 1 ? '└─' : '├─'} ${slug}\u{1B}[0m`)
           }
         }
 

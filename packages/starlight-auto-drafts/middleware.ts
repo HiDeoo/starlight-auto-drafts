@@ -13,7 +13,9 @@ function highlightDrafts(items: StarlightRouteData['sidebar']): StarlightRouteDa
   return items.map((item) => {
     if (item.type === 'group') {
       return { ...item, entries: highlightDrafts(item.entries) }
-    } else if (!context.draftIds.has(stripLeadingAndTrailingSlash(item.href))) {
+    }
+
+    if (!context.draftIds.has(stripLeadingAndTrailingSlash(item.href))) {
       return item
     }
 

@@ -18,7 +18,7 @@ export async function getDraftIds(astroConfig: AstroConfig, starlightConfig: Sta
   const defaultLocale = getDefaultLocale(starlightConfig)
 
   const entries = await getEntries(astroConfig)
-  const draftEntries = entries.filter((entry) => entry.draft === true)
+  const draftEntries = entries.filter((entry) => entry.draft)
 
   for (const entry of draftEntries) ids.add(entry.id)
 
@@ -33,7 +33,7 @@ export async function getDraftIds(astroConfig: AstroConfig, starlightConfig: Sta
         const localeId = getLocalizedId(starlightConfig, defaultLocaleEntry.id, locale)
         const hasLocaleEntry = localeEntries.some((entry) => entry.id === localeId)
 
-        if (hasLocaleEntry || defaultLocaleEntry.draft !== true) continue
+        if (hasLocaleEntry || !defaultLocaleEntry.draft) continue
 
         ids.add(localeId)
       }
@@ -118,9 +118,11 @@ function getEntryId(path: string, collectionUrl: URL): string {
 function filterEntriesByLocale(starlightConfig: StarlightUserConfig, entries: Entry[], locale: Locale): Entry[] {
   if (!starlightConfig.locales) return entries
 
-  if (locale && locale in starlightConfig.locales) {
+  if (locale && Object.hasOwn(starlightConfig.locales, locale)) {
     return entries.filter((entry) => entry.id === locale || entry.id.startsWith(`${locale}/`))
-  } else if (starlightConfig.locales.root) {
+  }
+
+  if (starlightConfig.locales.root) {
     const locales = Object.keys(starlightConfig.locales).filter((locale) => locale !== 'root')
     const isLocaleIndex = new RegExp(`^(${locales.join('|')})$`)
     const isLocaleDirectory = new RegExp(`^(${locales.join('|')})/`)

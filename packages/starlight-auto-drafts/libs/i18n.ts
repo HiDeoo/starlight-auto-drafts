@@ -13,17 +13,17 @@ export function isMultilingual(starlightConfig: StarlightUserConfig): boolean {
 export function getLocalizedId(starlightConfig: StarlightUserConfig, id: string, locale: Locale): string {
   const idLocale = getLocaleFromId(starlightConfig, id)
   if (idLocale === locale) return id
-  locale = locale ?? ''
+  locale ??= ''
   if (idLocale === id) return locale
-  if (idLocale) return stripTrailingSlash(id.replace(`${idLocale}/`, locale ? `${locale}/` : ''))
+  if (idLocale) return stripTrailingSlash(id.replace(`${idLocale}/`, () => (locale ? `${locale}/` : '')))
   return id ? `${locale}/${id}` : locale
 }
 
 // https://github.com/withastro/starlight/blob/bf58c60b9c3d5f5efdafbdba83cefa0566a367dc/packages/starlight/integrations/shared/slugToLocale.ts
 function getLocaleFromId(starlightConfig: StarlightUserConfig, id: string): Locale {
   const localesConfig = starlightConfig.locales ?? {}
-  const baseSegment = id.split('/')[0]
-  if (baseSegment && localesConfig[baseSegment]) return baseSegment
+  const baseSegment = id.split('/', 1)[0]
+  if (baseSegment && Object.hasOwn(localesConfig, baseSegment)) return baseSegment
   if (!localesConfig.root) return starlightConfig.defaultLocale
   return undefined
 }

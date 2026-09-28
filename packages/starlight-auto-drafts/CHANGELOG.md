@@ -1,5 +1,11 @@
 # starlight-auto-drafts
 
+## 0.3.1
+
+### Patch Changes
+
+- [#16](https://github.com/HiDeoo/starlight-auto-drafts/pull/16) [`1d7f12b`](https://github.com/HiDeoo/starlight-auto-drafts/commit/1d7f12bb8e8568f30aaae39168fa1f09cb582645) Thanks [@HiDeoo](https://github.com/HiDeoo)! - Fixes draft page detection on Windows.
+
 ## 0.3.0
 
 ### Minor Changes

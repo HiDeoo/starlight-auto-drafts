@@ -1,4 +1,6 @@
 import fs from 'node:fs/promises'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 import type { AstroConfig } from 'astro'
 import { slug } from 'github-slugger'
@@ -44,25 +46,24 @@ export async function getDraftIds(astroConfig: AstroConfig, starlightConfig: Sta
 }
 
 async function getEntries(astroConfig: AstroConfig): Promise<Entry[]> {
-  const collectionUrl = new URL('content/docs', astroConfig.srcDir)
+  const collectionPath = fileURLToPath(new URL('content/docs', astroConfig.srcDir))
 
   const paths = await glob([`**/[^_]*.{${docsExtensions.join(',')}}`], {
-    absolute: true,
-    cwd: collectionUrl.pathname,
+    cwd: collectionPath,
     onlyFiles: true,
   })
 
   const entries: Entry[] = []
 
-  for (const path of paths) {
-    const content = await readFrontmatter(path)
+  for (const entryPath of paths) {
+    const content = await readFrontmatter(path.join(collectionPath, entryPath))
     const frontmatter = matter(content)
     const customSlug: unknown = frontmatter.data['slug']
     entries.push({
       id:
         typeof customSlug === 'string' && customSlug.length > 0
           ? stripLeadingAndTrailingSlash(customSlug)
-          : getEntryId(path, collectionUrl),
+          : getEntryId(entryPath),
       draft: frontmatter.data['draft'] === true,
     })
   }
@@ -106,9 +107,8 @@ async function readFrontmatter(path: string): Promise<string> {
   }
 }
 
-function getEntryId(path: string, collectionUrl: URL): string {
-  const idPath = path.replace(collectionUrl.pathname, '')
-  const segments = stripLeadingAndTrailingSlash(stripExtension(idPath)).split('/')
+function getEntryId(path: string): string {
+  const segments = stripExtension(path).split('/')
   const idSegments = segments.map((segment) => slug(segment))
   const id = idSegments.join('/')
   return id === 'index' ? '' : id
